@@ -27,7 +27,7 @@ output_file = 'funcoesC'
 #     subprocess.run(["gcc", "-shared", "-o", f"{output_file}.so"] + c_files + ["-fPIC"])
 #     funcoesC = ctypes.CDLL(f'./{output_file}.so')
 # elif os.name == 'nt':   # Se for Windows
-#subprocess.run(["gcc", "-shared", "-o", f"{output_file}.dll"] + c_files + ["-fPIC"])
+subprocess.run(["gcc", "-shared", "-m64", "-o", f"{output_file}.dll"] + c_files + ["-fPIC"])
 funcoesC = ctypes.CDLL(f'./{output_file}.dll')
 # else:
 #     raise Exception("Sistema operacional não suportado")
