@@ -5,24 +5,7 @@ import subprocess
 import sys
 import io
 import glob
-
-# Salvar a referência ao stdin original
-original_stdin = sys.stdin
-
-# Exemplo para redirecionamento da stdin (AINDA NAO UTILIZADO)
-def redirect_stdin(input_str):
-    # Criar um buffer de string
-    input_buffer = io.StringIO(input_str)
-    
-    # Redirecionar stdin
-    sys.stdin = input_buffer
-    
-    # Chamar a função C
-    lib.read_from_stdin()
-    
-    # Restaurar stdin
-    sys.stdin = original_stdin
-        
+import tempfile
 
 # Diretório onde estão os arquivos .c e .h
 src_dir = 'ArquivosC'
@@ -40,15 +23,14 @@ if not h_files:
 # Nome do arquivo de saída
 output_file = 'funcoesC'
 
-if os.name == 'posix':  # Se for Linux
-    subprocess.run(["gcc", "-shared", "-o", f"{output_file}.so"] + c_files + ["-fPIC"])
-    funcoesC = ctypes.CDLL(f'./{output_file}.so')
-elif os.name == 'nt':   # Se for Windows
-    subprocess.run(["gcc", "-shared", "-o", f"{output_file}.dll"] + c_files + ["-fPIC"])
-    funcoesC = ctypes.CDLL(f'./{output_file}.dll')
-else:
-    raise Exception("Sistema operacional não suportado")
-
+# if os.name == 'posix':  # Se for Linux
+#     subprocess.run(["gcc", "-shared", "-o", f"{output_file}.so"] + c_files + ["-fPIC"])
+#     funcoesC = ctypes.CDLL(f'./{output_file}.so')
+# elif os.name == 'nt':   # Se for Windows
+#subprocess.run(["gcc", "-shared", "-o", f"{output_file}.dll"] + c_files + ["-fPIC"])
+funcoesC = ctypes.CDLL(f'./{output_file}.dll')
+# else:
+#     raise Exception("Sistema operacional não suportado")
 
 def main():
     # Criando um objeto socket
@@ -77,8 +59,6 @@ def main():
         if not data:
             break
         
-        print(f"Mensagem recebida do cliente {addr}: {data}")
-
         partes_instrucao = data.split(" ")
 
         # Codigo da instrucao
@@ -112,13 +92,38 @@ def main():
 
         elif (codigo == '3'):
             # funcionalidade 3: select_from_where
-            num_buscas = partes_instrucao[1]
+
+            # Lê nome do arquivo
+            nome_arq_bin = partes_instrucao[1]
+            nome_arq_bin_bytes = ctypes.c_char_p(nome_arq_bin.encode('utf-8'))
+
+            # Lê número de buscas
+            num_buscas = partes_instrucao[2].split('\n')[0]
+            num_buscas_bytes = ctypes.c_int(int(num_buscas))
+
+            # Concatena o restante dos argumentos
+            restante_args = ' '.join(partes_instrucao[2:])
+
+            # Cria um arquivo temporário e escreve os argumentos restantes nele
+            temp_file = tempfile.NamedTemporaryFile(delete=False)
+            temp_file.write(restante_args.encode('utf-8'))
+            temp_file.close()
+
+            temp_file_path = temp_file.name.encode('utf-8')
+
+            funcoesC.select_from_where.argtypes = [ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p]
+            funcoesC.select_from_where.restype = None
+
+            # Chamada da função
+            funcoesC.select_from_where(nome_arq_bin_bytes, num_buscas_bytes, ctypes.c_char_p(temp_file_path))
+
+            # Exclui o arquivo temporário
+            os.unlink(temp_file.name)
 
         elif (codigo == '4'):
             # funcionalidade 4: create_index
             nome_arq_dados = partes_instrucao[1]
             nome_arq_indice = partes_instrucao[2]
-
 
         elif (codigo == '5'):
             # funcionalidade 5: delete_from_where
@@ -136,11 +141,6 @@ def main():
             # funcionalidade 7: update
             nome_arq_dados = partes_instrucao[1]
             nome_arq_indice = partes_instrucao[2]
-
-
-        
-        # Exemplo de resposta ao cliente
-        
         
         # Fechando a conexão com o cliente
         client_socket.close()

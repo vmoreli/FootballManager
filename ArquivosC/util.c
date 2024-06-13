@@ -120,7 +120,7 @@ void lerCamposRegParcial(REG_DADO * reg){
 
 	int n;
 	// lendo o numero de campos que serao lidos
-	scanf(" %d", &n);
+	scanf("%d", &n);
 	getchar(); //descarta o ' ' da entrada
 	
 	char * campo;
@@ -133,10 +133,10 @@ void lerCamposRegParcial(REG_DADO * reg){
 	for (int j = 0; j < n; j++){
 		campo = lerStr();
 		if(!strcmp(campo, "id")){
-			scanf(" %d", &reg->id);
+			scanf("%d", &reg->id);
 			getchar(); //descarta o ' ' ou '\n' da entrada
 		}else if (!strcmp(campo, "idade")){
-			scanf(" %d", &reg->idade);
+			scanf("%d", &reg->idade);
 			getchar(); //descarta o ' ' ou '\n' da entrada
 		}else if (!strcmp(campo, "nacionalidade")){
 			//tenta alocar memoria para o campo caso nao consiga sai do programa
