@@ -6,12 +6,19 @@ Autores: Giordano Santorum Lorenzetto - nUSP 14574017
 
 #include "select.h"
 
-void select_from(char * arquivobin){
+void select_from(char * arquivobin, char * file_path_out){
+    // Abertura do arquivo temporário para escrita
+    FILE *outfile = fopen(file_path_out, "w");
+    if (outfile == NULL) {
+        perror("Erro ao abrir o arquivo temporário");
+        return;
+    }
 
     // Abertura do arquivo binario para leitura
     FILE * filebin = fopen(arquivobin, "rb");
     if(filebin == NULL){
-        printf("Falha no processamento do arquivo.\n");
+        fprintf(outfile, "Falha no processamento do arquivo.\n");
+        fclose(outfile);
         return;
     }
 
@@ -20,27 +27,29 @@ void select_from(char * arquivobin){
 
     // Se o arquivo estiver inconsistente, houve falha no processamento do arquivo
     if(regCab.status == '0'){
-        printf("Falha no processamento do arquivo.\n");
+        fprintf(outfile, "Falha no processamento do arquivo.\n");       
         fclose(filebin);
+        fclose(outfile);
         return;
     }
 
     // Se o numero de arquivos registrados for zero, nao eh necessario fazer a busca
     if(regCab.nroRegArq == 0){
-        printf("Registro inexistente.\n\n");
+        fprintf(outfile, "Registro inexistente.\n\n");
+        fclose(outfile);
         fclose(filebin);
         return;
     }
 
-    REG_DADO regDado; // Declara registro de dados
+    REG_DADO regDado; // Declara registro de dados  
 
     while(readRegDadoBin(filebin, &regDado)){ // Lê registro de dados um por um até chegar ao fim do arquivo
 
         if(regDado.removido == '0'){ // se o registro lido não estiver removido, imprime na saida padrão
-            printf("Nome do Jogador: %s\n", regDado.tamNomeJog == 0 ? "SEM DADO" : regDado.nomeJogador);
-            printf("Nacionalidade do Jogador: %s\n", regDado.tamNacionalidade == 0 ? "SEM DADO" : regDado.nacionalidade);
-            printf("Clube do Jogador: %s\n", regDado.tamNomeClube == 0 ? "SEM DADO" : regDado.nomeClube);
-            printf("\n");
+            fprintf(outfile, "Nome do Jogador: %s\n", regDado.tamNomeJog == 0 ? "SEM DADO" : regDado.nomeJogador);
+            fprintf(outfile, "Nacionalidade do Jogador: %s\n", regDado.tamNacionalidade == 0 ? "SEM DADO" : regDado.nacionalidade);
+            fprintf(outfile, "Clube do Jogador: %s\n", regDado.tamNomeClube == 0 ? "SEM DADO" : regDado.nomeClube);
+            fprintf(outfile, "\n");
         }
 
         // liberação de memoria das strings de regDado
@@ -52,14 +61,22 @@ void select_from(char * arquivobin){
     
     // fechando o arquivo binário
     fclose(filebin);
+    fclose(outfile);
 }
 
-void select_from_where(char * arquivobin, int num_buscas){
+void select_from_where(char * arquivobin, int num_buscas, char * file_path_in, char * file_path_out){
+    // Abertura do arquivo temporário para escrita
+    FILE *outfile = fopen(file_path_out, "w");
+    if (outfile == NULL) {
+        perror("Erro ao abrir o arquivo temporário");
+        return;
+    }
 
     // Abertura do arquivo binario para leitura
     FILE * filebin = fopen(arquivobin, "rb");
     if(filebin == NULL){
-        printf("Falha no processamento do arquivo.\n");
+        fprintf(outfile, "Falha no processamento do arquivo.\n");
+        fclose(outfile);
         return;
     }
 
@@ -69,8 +86,9 @@ void select_from_where(char * arquivobin, int num_buscas){
     // Se o numero de arquivos registrados for zero ou se o arquivo estiver inconsistente,
     // nao eh necessario fazer a busca
     if(regCab.nroRegArq == 0 || regCab.status == '0'){
-        printf("Registro inexistente.\n"); 
+        fprintf(outfile, "Registro inexistente.\n"); 
         fclose(filebin);
+        fclose(outfile);
         return;
     }
 
@@ -85,11 +103,17 @@ void select_from_where(char * arquivobin, int num_buscas){
     REG_DADO regDado; // struct q armazenará temporariamente registros de dados lidos do arquivo e entrada
 
     char reg_encontrado = 0; // flag para determinar se ao menos 1 registro foi encontrado
+
+    FILE *input_file = freopen(file_path_in, "r", stdin);
+    if (input_file == NULL) {
+        perror("freopen");
+        return;
+    }
     
     for(int i = 1; i <= num_buscas; i++){
 
         // Inicio da i-esima busca
-        printf("Busca %d\n\n", i);
+        fprintf(outfile, "Busca %d\n\n", i);
         
         // lendo os campos e seus valores, e atribuindo eles ao registro modelo
         lerCamposRegParcial(&regDadoModelo);
@@ -101,10 +125,10 @@ void select_from_where(char * arquivobin, int num_buscas){
             // se o registro lido nao estiver removido, compara com o registro modelo 
             if(regDado.removido == '0'){
                 if(comparaRegDado(regDadoModelo, regDado)){ // compara nomeJog caso o nomeJog do modelo nao for nulo
-                    printf("Nome do Jogador: %s\n", regDado.tamNomeJog == 0 ? "SEM DADO" : regDado.nomeJogador);
-                    printf("Nacionalidade do Jogador: %s\n", regDado.tamNacionalidade == 0 ? "SEM DADO" : regDado.nacionalidade);
-                    printf("Clube do Jogador: %s\n", regDado.tamNomeClube == 0 ? "SEM DADO" : regDado.nomeClube);
-                    printf("\n");        
+                    fprintf(outfile, "Nome do Jogador: %s\n", regDado.tamNomeJog == 0 ? "SEM DADO" : regDado.nomeJogador);
+                    fprintf(outfile, "Nacionalidade do Jogador: %s\n", regDado.tamNacionalidade == 0 ? "SEM DADO" : regDado.nacionalidade);
+                    fprintf(outfile, "Clube do Jogador: %s\n", regDado.tamNomeClube == 0 ? "SEM DADO" : regDado.nomeClube);
+                    fprintf(outfile, "\n");          
                     reg_encontrado = 1;
                 }                
             }
@@ -118,7 +142,7 @@ void select_from_where(char * arquivobin, int num_buscas){
             if(regDadoModelo.id != -1 && reg_encontrado == 1) 
                 break;                 
         }
-        
+
         // se nenhum registro foi encontrado, informamos o usuario
         if(reg_encontrado == 0) printf("Registro inexistente.\n\n");
 
@@ -136,6 +160,10 @@ void select_from_where(char * arquivobin, int num_buscas){
         // retorna o ponteiro do arquivo para o inicio dos registros de dados (pula o cabecalho)
         fseek(filebin, TAM_REG_CAB, SEEK_SET);
     }    
+
+    // Fecha o arquivo temporário
+    fclose(input_file);
+    fclose(outfile);
 
     //fecha o arquivo
     fclose(filebin);

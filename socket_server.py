@@ -2,8 +2,6 @@ import socket
 import ctypes
 import os
 import subprocess
-import sys
-import io
 import glob
 import tempfile
 
@@ -23,14 +21,12 @@ if not h_files:
 # Nome do arquivo de saída
 output_file = 'funcoesC'
 
-# if os.name == 'posix':  # Se for Linux
-#     subprocess.run(["gcc", "-shared", "-o", f"{output_file}.so"] + c_files + ["-fPIC"])
-#     funcoesC = ctypes.CDLL(f'./{output_file}.so')
-# elif os.name == 'nt':   # Se for Windows
-subprocess.run(["gcc", "-shared", "-m64", "-o", f"{output_file}.dll"] + c_files + ["-fPIC"])
-funcoesC = ctypes.CDLL(f'./{output_file}.dll')
-# else:
-#     raise Exception("Sistema operacional não suportado")
+if os.name == 'posix':  # Se for Linux
+    funcoesC = ctypes.CDLL(f'./{output_file}.so')
+elif os.name == 'nt':   # Se for Windows
+    funcoesC = ctypes.CDLL(f'./{output_file}.dll')
+else:
+    raise Exception("Sistema operacional não suportado")
 
 def main():
     # Criando um objeto socket
@@ -38,7 +34,7 @@ def main():
     
     # Definindo o host e a porta
     host = '127.0.0.1'
-    port = 12345
+    port = 12346
     
     # Ligando o socket ao host e porta
     server_socket.bind((host, port))
@@ -88,7 +84,34 @@ def main():
 
         elif (codigo == '2'):
             # funcionalidade 2: select_from
+
+            # Lê string de entrada: nome do arquivo de dados
             nome_arq_dados = partes_instrucao[1]
+
+            # Converte string para bytes, necessário para passagem de parâmetro
+            nome_arq_dados_bytes = ctypes.c_char_p(nome_arq_dados.encode('utf-8'))
+
+            # Cria um arquivo temporário para escrever a saída
+            temp_file_out = tempfile.NamedTemporaryFile(delete=False)
+            temp_file_out.close()
+            temp_file_out_path = temp_file_out.name.encode('utf-8')
+
+            # Definição dos argumentos e retorno da função
+            funcoesC.select_from.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
+            funcoesC.select_from.restype = None
+
+            # Chamada da função
+            funcoesC.select_from(nome_arq_dados_bytes, temp_file_out_path)
+
+            # Lê o conteúdo do arquivo de saída temporário
+            with open(temp_file_out.name, 'r', encoding='utf-8') as f:
+                response = f.read()
+
+            # Envia resposta ao cliente
+            client_socket.send(response.encode())
+
+            # Exclui o arquivo temporário
+            os.unlink(temp_file_out.name)
 
         elif (codigo == '3'):
             # funcionalidade 3: select_from_where
@@ -105,20 +128,33 @@ def main():
             restante_args = ' '.join(partes_instrucao[2:])
 
             # Cria um arquivo temporário e escreve os argumentos restantes nele
-            temp_file = tempfile.NamedTemporaryFile(delete=False)
-            temp_file.write(restante_args.encode('utf-8'))
-            temp_file.close()
+            temp_file_in = tempfile.NamedTemporaryFile(delete=False)
+            temp_file_in.write(restante_args.encode('utf-8'))
+            temp_file_in.close()
+            temp_file_in_path = temp_file_in.name.encode('utf-8')
 
-            temp_file_path = temp_file.name.encode('utf-8')
+            # Cria um arquivo temporário para escrever a saída
+            temp_file_out = tempfile.NamedTemporaryFile(delete=False)
+            temp_file_out.close()
+            temp_file_out_path = temp_file_out.name.encode('utf-8')
 
-            funcoesC.select_from_where.argtypes = [ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p]
+            # Definição dos argumentos e retorno da função
+            funcoesC.select_from_where.argtypes = [ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_char_p]
             funcoesC.select_from_where.restype = None
 
             # Chamada da função
-            funcoesC.select_from_where(nome_arq_bin_bytes, num_buscas_bytes, ctypes.c_char_p(temp_file_path))
+            funcoesC.select_from_where(nome_arq_bin_bytes, num_buscas_bytes, temp_file_in_path, temp_file_out_path)
 
-            # Exclui o arquivo temporário
-            os.unlink(temp_file.name)
+            # Lê o conteúdo do arquivo de saída temporário
+            with open(temp_file_out.name, 'r', encoding='utf-8') as f:
+                response = f.read()
+
+            # Envia resposta ao cliente
+            client_socket.send(response.encode())
+
+            # Exclui os arquivos temporários
+            os.unlink(temp_file_in.name)
+            os.unlink(temp_file_out.name)
 
         elif (codigo == '4'):
             # funcionalidade 4: create_index

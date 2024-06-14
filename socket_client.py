@@ -14,14 +14,14 @@ def main():
     client_socket.connect((host, port))
     
     # Enviando uma mensagem para o servidor
-    message = '3 binario8.bin 2\n2 idade 27 nacionalidade "GERMANY"\n1 nomeClube "JUVENTUS"'
+    message = '2 binario3.bin'
     #message = '1 /home/victor/Downloads/arquivos/dado1.csv binarioteste.bin'
     client_socket.send(message.encode())
     
     # Recebendo a resposta do servidor
-    response = client_socket.recv(1024).decode()
+    response = client_socket.recv(100000).decode()
     print("Resposta do servidor:", response)
-    
+
     # Fechando a conexão com o servidor
     client_socket.close()
 
