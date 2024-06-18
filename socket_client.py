@@ -8,7 +8,7 @@ def main():
     
     # Definindo o host e a porta
     host = '127.0.0.1'
-    port = 12346
+    port = 12345
     
     # Conectando-se ao servidor
     client_socket.connect((host, port))
