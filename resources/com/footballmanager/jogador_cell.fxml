@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.text.Font?>
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="com.footballmanager.JogadorCellController">
+    <columnConstraints>
+        <ColumnConstraints percentWidth="10"/>
+        <ColumnConstraints percentWidth="35"/>
+        <ColumnConstraints percentWidth="35"/>
+        <ColumnConstraints percentWidth="10"/>
+        <ColumnConstraints percentWidth="10"/>
+    </columnConstraints>
+    <Label fx:id="id" GridPane.columnIndex="0" textFill="darkslategrey">
+        <font>
+            <Font name="Arial bold" size="12"/>
+        </font>
+    </Label>
+    <Label fx:id="nomeJogador" GridPane.columnIndex="1" textFill="darkslategrey">
+        <font>
+            <Font name="Arial bold" size="12"/>
+        </font>
+    </Label>
+    <Label fx:id="nomeClube" GridPane.columnIndex="2" textFill="darkslategrey">
+        <font>
+            <Font name="Arial bold" size="12"/>
+        </font>
+    </Label>
+    <Button fx:id="editar" GridPane.columnIndex="3">
+        <graphic>
+            <ImageView>
+                <Image url="@/toolbarButtonGraphics/general/Edit24.gif"/>
+            </ImageView>
+        </graphic>
+    </Button>
+    <Button fx:id="remover" GridPane.columnIndex="4">
+        <graphic>
+            <ImageView>
+                <Image url="@/toolbarButtonGraphics/general/Delete24.gif"/>
+            </ImageView>
+        </graphic>
+    </Button>
+
+</GridPane>

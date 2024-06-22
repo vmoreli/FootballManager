@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<?import com.sun.javafx.scene.control.ContextMenuContent.MenuBox?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.footballmanager.FootballManagerController"
+            fx:id="mainBorderPane">
+
+    <top>
+        <MenuBar>
+            <Menu text="Arquivo">
+                <MenuItem text="Abrir" onAction="#clicouAbrir"/>
+                <MenuItem text="Fechar" onAction="#clicouFechar"/>
+                <MenuItem text="Sair" onAction="#clicouSair"/>
+            </Menu>
+        </MenuBar>
+    </top>
+
+    <left>
+        <GridPane hgap="5" vgap="10" prefWidth="300">
+            <padding>
+                <Insets topRightBottomLeft="5"/>
+            </padding>
+            <columnConstraints>
+                <ColumnConstraints percentWidth="20.0"/>
+                <ColumnConstraints percentWidth="80.0"/>
+            </columnConstraints>
+            <Label text="JOGADOR" textFill="darkslategray" GridPane.columnSpan="2" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <font>
+                    <Font name="Arial bold" size="18"/>
+                </font>
+            </Label>
+
+            <Label text="ID:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+            <TextField fx:id="id" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+            <Label text="Idade:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <TextField fx:id="idade" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <Label text="Nome:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <TextField fx:id="nomeJogador" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+            <Label text="País:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <TextField fx:id="nacionalidade" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+            <Label text="Clube:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <TextField fx:id="nomeClube" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+            <Button fx:id="procurar" text="Procurar" prefWidth="150" alignment="CENTER" GridPane.rowIndex="7" GridPane.columnSpan="2"
+                    onAction="#clicouProcurar"/>
+        </GridPane>
+    </left>
+
+    <center>
+        <ListView fx:id="jogadoresListView" onMouseClicked="#clicouJogador"/>
+    </center>
+</BorderPane>

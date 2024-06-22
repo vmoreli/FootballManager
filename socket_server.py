@@ -72,15 +72,16 @@ def run_c_program(executable, input_string):
 
 # Function to handle each client connection
 def handle_client(client_socket, executable):
-    try:
-        input_string = client_socket.recv(1024).decode()
-        if input_string:
-            output = run_c_program(executable, input_string)
-            client_socket.sendall(output.encode())  # Ensure output is encoded before sending
-    except Exception as e:
-        print(f"Error handling client: {e}")
-    finally:
-        client_socket.close()
+    while True:
+        try:
+            input_string = client_socket.recv(1024).decode()
+            if input_string:
+                output = run_c_program(executable, input_string)
+                client_socket.sendall(output.encode())  # Ensure output is encoded before sending
+        except Exception as e:
+            print(f"Error handling client: {e}")
+            client_socket.close()
+            return
 
 # Function to start the socket server
 def start_server(host, port, executable):
@@ -88,12 +89,11 @@ def start_server(host, port, executable):
     server_socket.bind((host, port))
     server_socket.listen(5)
     print(f"Server started on {host}:{port}")
-    
-    while True:
-        client_socket, addr = server_socket.accept()
-        print(f"Connection from {addr}")
-        client_handler = threading.Thread(target=handle_client, args=(client_socket, executable))
-        client_handler.start()
+
+    client_socket, addr = server_socket.accept()
+    print(f"Connection from {addr}")
+    client_handler = threading.Thread(target=handle_client, args=(client_socket, executable))
+    client_handler.start()
 
 # Main function
 def main():

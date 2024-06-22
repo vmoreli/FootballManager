@@ -37,9 +37,10 @@ void select_from(char * arquivobin){
     while(readRegDadoBin(filebin, &regDado)){ // Lê registro de dados um por um até chegar ao fim do arquivo
 
         if(regDado.removido == '0'){ // se o registro lido não estiver removido, imprime na saida padrão
-            printf("Nome do Jogador: %s\n", regDado.tamNomeJog == 0 ? "SEM DADO" : regDado.nomeJogador);
-            printf("Nacionalidade do Jogador: %s\n", regDado.tamNacionalidade == 0 ? "SEM DADO" : regDado.nacionalidade);
-            printf("Clube do Jogador: %s\n", regDado.tamNomeClube == 0 ? "SEM DADO" : regDado.nomeClube);
+            printf("%d,%d,", regDado.id, regDado.idade);
+            printf("%s,", regDado.tamNomeJog == 0 ? "SEM DADO" : regDado.nomeJogador);
+            printf("%s,", regDado.tamNacionalidade == 0 ? "SEM DADO" : regDado.nacionalidade);
+            printf("%s", regDado.tamNomeClube == 0 ? "SEM DADO" : regDado.nomeClube);
             printf("\n");
         }
 
@@ -48,7 +49,9 @@ void select_from(char * arquivobin){
         free(regDado.nacionalidade);
         free(regDado.nomeClube);
         
-    }    
+    }
+
+    printf("FIM\n");
     
     // fechando o arquivo binário
     fclose(filebin);
@@ -87,9 +90,6 @@ void select_from_where(char * arquivobin, int num_buscas){
     char reg_encontrado = 0; // flag para determinar se ao menos 1 registro foi encontrado
     
     for(int i = 1; i <= num_buscas; i++){
-
-        // Inicio da i-esima busca
-        printf("Busca %d\n\n", i);
         
         // lendo os campos e seus valores, e atribuindo eles ao registro modelo
         lerCamposRegParcial(&regDadoModelo);
@@ -101,10 +101,11 @@ void select_from_where(char * arquivobin, int num_buscas){
             // se o registro lido nao estiver removido, compara com o registro modelo 
             if(regDado.removido == '0'){
                 if(comparaRegDado(regDadoModelo, regDado)){ // compara nomeJog caso o nomeJog do modelo nao for nulo
-                    printf("Nome do Jogador: %s\n", regDado.tamNomeJog == 0 ? "SEM DADO" : regDado.nomeJogador);
-                    printf("Nacionalidade do Jogador: %s\n", regDado.tamNacionalidade == 0 ? "SEM DADO" : regDado.nacionalidade);
-                    printf("Clube do Jogador: %s\n", regDado.tamNomeClube == 0 ? "SEM DADO" : regDado.nomeClube);
-                    printf("\n");        
+                    printf("%d,%d,", regDado.id, regDado.idade);
+                    printf("%s,", regDado.tamNomeJog == 0 ? "SEM DADO" : regDado.nomeJogador);
+                    printf("%s,", regDado.tamNacionalidade == 0 ? "SEM DADO" : regDado.nacionalidade);
+                    printf("%s", regDado.tamNomeClube == 0 ? "SEM DADO" : regDado.nomeClube);
+                    printf("\n");
                     reg_encontrado = 1;
                 }                
             }
@@ -118,9 +119,9 @@ void select_from_where(char * arquivobin, int num_buscas){
             if(regDadoModelo.id != -1 && reg_encontrado == 1) 
                 break;                 
         }
-        
+
         // se nenhum registro foi encontrado, informamos o usuario
-        if(reg_encontrado == 0) printf("Registro inexistente.\n\n");
+        printf("%s\n", reg_encontrado == 0? "REGISTRO INEXISTENTE" : "FIM");
 
         if(regDadoModelo.nacionalidade != NULL) free(regDadoModelo.nacionalidade);
         if(regDadoModelo.nomeClube != NULL) free(regDadoModelo.nomeClube);

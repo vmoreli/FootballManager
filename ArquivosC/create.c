@@ -10,12 +10,12 @@ Autores: Giordano Santorum Lorenzetto - nUSP 14574017
 void create_table(char * arquivoIn, char * arquivoOut){
     FILE * fIn = fopen(arquivoIn, "r");     // arquivoIn: nome do arquivo csv de entrada
     if(fIn == NULL){
-        printf("Erro na abertura do .csv\n");
+        printf("Falha no processamento do arquivo.\n");
         exit(1);
     }
     FILE * fOut = fopen(arquivoOut, "wb");  // arquivoOut: nome do arquivo bin de saída
     if(fOut == NULL){
-        printf("Erro na abertura do .bin\n");
+        printf("Falha no processamento do arquivo.n\n");
         exit(1);
     }
 
