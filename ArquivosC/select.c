@@ -15,6 +15,11 @@ void select_from(char * arquivobin){
         return;
     }
 
+    // Determinação do tamaho do arquivo
+    fseek(filebin, 0, SEEK_END);
+    long int tamArquivo = ftell(filebin);
+    fseek(filebin, 0, SEEK_SET);
+
     REG_CAB regCab; // Declara registro de cabeçalho
     readRegCabBin(filebin, &regCab); // Lê registro de cabeçalho
 
@@ -34,7 +39,10 @@ void select_from(char * arquivobin){
 
     REG_DADO regDado; // Declara registro de dados
 
-    while(readRegDadoBin(filebin, &regDado)){ // Lê registro de dados um por um até chegar ao fim do arquivo
+    while(ftell(filebin) != tamArquivo){ // Lê registro de dados um por um até chegar ao fim do arquivo
+        long inicio = ftell(filebin);
+        // Lê os registros de dados
+        readRegDadoBin(filebin, &regDado); // Lê registro de dados
 
         if(regDado.removido == '0'){ // se o registro lido não estiver removido, imprime na saida padrão
             printf("%d,%d,", regDado.id, regDado.idade);
@@ -43,6 +51,8 @@ void select_from(char * arquivobin){
             printf("%s", regDado.tamNomeClube == 0 ? "SEM DADO" : regDado.nomeClube);
             printf("\n");
         }
+
+        fseek(filebin, regDado.tamanhoRegistro, inicio);
 
         // liberação de memoria das strings de regDado
         free(regDado.nomeJogador);

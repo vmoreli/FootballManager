@@ -36,39 +36,40 @@ void binarioNaTela(char *nomeArquivoBinario) { /* Você não precisa entender o 
 
 void scan_quote_string(char *str) {
 
-	/*
-	*	Use essa função para ler um campo string delimitado entre aspas (").
-	*	Chame ela na hora que for ler tal campo. Por exemplo:
-	*
-	*	A entrada está da seguinte forma:
-	*		nomeDoCampo "MARIA DA SILVA"
-	*
-	*	Para ler isso para as strings já alocadas str1 e str2 do seu programa, você faz:
-	*		scanf("%s", str1); // Vai salvar nomeDoCampo em str1
-	*		scan_quote_string(str2); // Vai salvar MARIA DA SILVA em str2 (sem as aspas)
-	*
-	*/
+    /*
+    *   Use essa função para ler um campo string delimitado entre aspas (").
+    *   Chame ela na hora que for ler tal campo. Por exemplo:
+    *
+    *   A entrada está da seguinte forma:
+    *       nomeDoCampo "MARIA DA SILVA"
+    *
+    *   Para ler isso para as strings já alocadas str1 e str2 do seu programa, você faz:
+    *       scanf("%s", str1); // Vai salvar nomeDoCampo em str1
+    *       scan_quote_string(str2); // Vai salvar MARIA DA SILVA em str2 (sem as aspas)
+    *
+    */
 
-	char R;
+    char R;
 
-	while((R = getchar()) != EOF && isspace(R)); // ignorar espaços, \r, \n...
+    while ((R = getchar()) != EOF && isspace(R)); // Ignorar espaços, \r, \n...
 
-	if(R == 'N' || R == 'n') { // campo NULO
-		getchar(); getchar(); getchar(); // ignorar o "ULO" de NULO.
-		strcpy(str, ""); // copia string vazia
-	} else if(R == '\"') {
-		if(scanf("%[^\"]", str) != 1) { // ler até o fechamento das aspas
-			strcpy(str, "");
-		}
-		getchar(); // ignorar aspas fechando
-	} else if(R != EOF){ // vc tá tentando ler uma string que não tá entre aspas! Fazer leitura normal %s então, pois deve ser algum inteiro ou algo assim...
-		str[0] = R;
-		scanf("%s", &str[1]);
-	} else { // EOF
-		strcpy(str, "");
-	}
-
+    if (R == 'N' || R == 'n') { // campo NULO
+        getchar(); getchar(); getchar(); // Ignorar o "ULO" de NULO.
+        strcpy(str, ""); // Copia string vazia
+    } else if (R == '\"') {
+        if (scanf("%[^\"]", str) != 1) { // Ler até o fechamento das aspas
+            strcpy(str, "");
+        }
+        getchar(); // Ignorar aspas fechando
+    } else if (R != EOF) { // Ler string não delimitada por aspas
+        ungetc(R, stdin); // Devolver o caractere lido ao buffer de entrada
+        scanf("%s", str);
+    } else { // EOF
+        strcpy(str, "");
+    }
 }
+
+
 
 // Função que lê uma string do arquivo de entrada
 char * lerStr(){
@@ -167,6 +168,7 @@ void lerCamposRegCompleto(REG_DADO * reg){
 	char id[20];
 	scan_quote_string(id);
 	reg->id = atoi(id);
+	//printf("\n%d\n", reg->id);
 	
 	getchar();  // pula o espaço
 

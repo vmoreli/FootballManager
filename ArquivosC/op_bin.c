@@ -36,33 +36,48 @@ void writeRegCabBin(FILE * fOut, REG_CAB cabecalho){
 }
 
 //Função que lê um registro de dados de um arquivo binário, preenchendo o regDado
-int readRegDadoBin(FILE * filebin, REG_DADO * regDado){
-    // Lê o char de removido
-    if(fread(&(regDado -> removido), sizeof(char), 1, filebin) == 0)
+int readRegDadoBin(FILE *filebin, REG_DADO *regDado) {
+    char ch;
+
+    // Skip all '$' characters at the beginning
+    while (fread(&ch, sizeof(char), 1, filebin) == 1 && ch == '$');
+
+    // Check if we reached EOF or a valid character
+    if (feof(filebin)) {
         return 0;
+    }
+
+    // If we read a valid character that is not '$', put it back into the stream
+    if (ch != '$') {
+        fseek(filebin, -1, SEEK_CUR);
+    }
+
+    // Lê o char de removido
+    fread(&(regDado->removido), sizeof(char), 1, filebin);
     // Lê o tamanho do registro
-    fread(&(regDado -> tamanhoRegistro), sizeof(int), 1, filebin);
+    fread(&(regDado->tamanhoRegistro), sizeof(int), 1, filebin);
     // Lê o prox
-    fread(&(regDado -> prox), sizeof(long), 1, filebin);
+    fread(&(regDado->prox), sizeof(long), 1, filebin);
     // Lê o id
-    fread(&(regDado -> id), sizeof(int), 1, filebin);
+    fread(&(regDado->id), sizeof(int), 1, filebin);
     // Lê a idade
-    fread(&(regDado -> idade), sizeof(int), 1, filebin);
+    fread(&(regDado->idade), sizeof(int), 1, filebin);
     // Lê o tamanho do nome do jogador
-    fread(&(regDado -> tamNomeJog), sizeof(int), 1, filebin);
+    fread(&(regDado->tamNomeJog), sizeof(int), 1, filebin);
     // Lê o nome do jogador
-    lerStrBin(filebin, &(regDado -> nomeJogador), regDado -> tamNomeJog);
+    lerStrBin(filebin, &(regDado->nomeJogador), regDado->tamNomeJog);
     // Lê o tamanho da nacionalidade
-    fread(&(regDado -> tamNacionalidade), sizeof(int), 1, filebin);
+    fread(&(regDado->tamNacionalidade), sizeof(int), 1, filebin);
     // Lê a nacionalidade
-    lerStrBin(filebin, &(regDado -> nacionalidade), regDado -> tamNacionalidade);
+    lerStrBin(filebin, &(regDado->nacionalidade), regDado->tamNacionalidade);
     // Lê o tamanho do nome do clube
-    fread(&(regDado -> tamNomeClube), sizeof(int), 1, filebin);
+    fread(&(regDado->tamNomeClube), sizeof(int), 1, filebin);
     // Lê o nome do clube
-    lerStrBin(filebin, &(regDado -> nomeClube), regDado -> tamNomeClube);
+    lerStrBin(filebin, &(regDado->nomeClube), regDado->tamNomeClube);
 
     return 1;
 }
+
 
 
 // Função que escreve um registro de dados num arquivo binário

@@ -76,6 +76,7 @@ def handle_client(client_socket, executable):
         try:
             input_string = client_socket.recv(1024).decode()
             if input_string:
+                print(input_string)
                 output = run_c_program(executable, input_string)
                 client_socket.sendall(output.encode())  # Ensure output is encoded before sending
         except Exception as e:
