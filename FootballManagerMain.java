@@ -67,12 +67,7 @@ public class FootballManagerMain extends JFrame {
 
         add(buttonPanel, BorderLayout.SOUTH);
 
-        procurarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clicouProcurar();
-            }
-        });
+        procurarButton.addActionListener(e -> clicouProcurar());
         jogadoresListView.addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 clicouJogador();
@@ -115,7 +110,7 @@ public class FootballManagerMain extends JFrame {
             output = new PrintWriter(socket.getOutputStream(), true);
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "FALHA NA CONECÇÃO SOCKET", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "FALHA NA CONECcaO SOCKET", "Erro", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
     }
@@ -170,7 +165,7 @@ public class FootballManagerMain extends JFrame {
                 s = input.readLine();
                 while (!s.equals("FIM")) {
                     if (s.equals("REGISTRO INEXISTENTE")) {
-                        JOptionPane.showMessageDialog(this, "Nenhum jogador foi encontrado", "Informação", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Nenhum jogador foi encontrado", "Informacao", JOptionPane.INFORMATION_MESSAGE);
                         return;
                     }
                     listaJog.add(s);
@@ -200,6 +195,10 @@ public class FootballManagerMain extends JFrame {
                 output.println("1 " + selectedFile.getPath() + " binario.bin ");
                 try {
                     String s = input.readLine();
+                    if(s.equals("Falha no processamento do arquivo.")){
+                        JOptionPane.showMessageDialog(this, "Falha na abertura do arquivo.", "Informacao", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
                     System.out.println(s);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -208,6 +207,10 @@ public class FootballManagerMain extends JFrame {
                 output.println("4 binario.bin indice.bin ");
                 try {
                     String s = input.readLine();
+                    if(s.equals("Falha no processamento do arquivo.")){
+                        JOptionPane.showMessageDialog(this, "Falha na abertura do arquivo.", "Informacao", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
                     System.out.println(s);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -236,7 +239,7 @@ public class FootballManagerMain extends JFrame {
     }
 
     private void clicouFechar() {
-        int result = JOptionPane.showConfirmDialog(this, "Todas as alterações serão perdidas!", "Deseja fechar o arquivo?", JOptionPane.YES_NO_OPTION);
+        int result = JOptionPane.showConfirmDialog(this, "Todas as alteracões serao perdidas!", "Deseja fechar o arquivo?", JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
             listModel.clear();
             procurarButton.setEnabled(false);
@@ -244,7 +247,7 @@ public class FootballManagerMain extends JFrame {
     }
 
     private void clicouSair() {
-        int result = JOptionPane.showConfirmDialog(this, "Todas as alterações serão perdidas!", "Deseja sair?", JOptionPane.YES_NO_OPTION);
+        int result = JOptionPane.showConfirmDialog(this, "Todas as alteracões serao perdidas!", "Deseja sair?", JOptionPane.YES_NO_OPTION);
         if (result == JOptionPane.YES_OPTION) {
             System.exit(0);
         }
@@ -303,10 +306,71 @@ public class FootballManagerMain extends JFrame {
                     procurarButton.setEnabled(true);
                 }
             }
+            if (editDialog.isRemPressed()) {
+                if (socket != null && socket.isConnected()) {
+                    output.println("5 binario.bin indice.bin 1 \n" + jogOriginal);
+
+                    try {
+                        String s = input.readLine();
+                        System.out.println(s);
+                        s = input.readLine();
+                        System.out.println(s);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    output.println("2 binario.bin ");
+                    ArrayList<String> listaJog = new ArrayList<>();
+                    String s;
+                    try {
+                        s = input.readLine();
+                        while (!s.equals("FIM")) {
+                            listaJog.add(s);
+                            s = input.readLine();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    listModel.clear();
+                    for (String jogString : listaJog) {
+                        listModel.addElement(new Jogador(jogString));
+                    }
+                    procurarButton.setEnabled(true);
+                }
+            }
         }
     }
 
     public static void main(String[] args) {
+
+        // Run a command line command before initializing Swing components
+        try {
+            // Example command to execute
+            String command = "python socket_server.py";
+
+            // Create ProcessBuilder for the command
+            ProcessBuilder pb = new ProcessBuilder(command.split(" "));
+            pb.redirectErrorStream(true); // Redirect error stream to output stream
+
+            // Start the process
+            Process process = pb.start();
+
+            Thread pythonThread = new Thread(() -> {
+                try {
+                    int exitCode = process.waitFor();
+                    System.out.println("Python process finished with exit code: " + exitCode);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+            pythonThread.start();
+            Thread.sleep(5000L);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         SwingUtilities.invokeLater(FootballManagerMain::new);
     }
 }

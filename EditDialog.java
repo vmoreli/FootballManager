@@ -12,56 +12,107 @@ public class EditDialog extends JDialog {
     private JTextField nomeClubeField;
     private Jogador jogador;
     private boolean okPressed;
+    private boolean remPressed;
 
     public EditDialog(Frame owner, Jogador jogador) {
         super(owner, "Edit Jogador", true);
         this.jogador = jogador;
 
         // Setup dialog layout
-        setLayout(new GridLayout(6, 2));
+        setLayout(new GridBagLayout());
         setSize(400, 300);
         setLocationRelativeTo(owner);
 
-        idField = new JTextField(Integer.toString(jogador.getId()));
-        idadeField = new JTextField(Integer.toString(jogador.getIdade()));
-        nomeJogadorField = new JTextField(jogador.getNomeJogador());
-        nacionalidadeField = new JTextField(jogador.getNacionalidade());
-        nomeClubeField = new JTextField(jogador.getNomeClube());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5); // Add some padding around components
 
-        add(new JLabel("ID:"));
-        add(idField);
-        add(new JLabel("Idade:"));
-        add(idadeField);
-        add(new JLabel("Nome Jogador:"));
-        add(nomeJogadorField);
-        add(new JLabel("Nacionalidade:"));
-        add(nacionalidadeField);
-        add(new JLabel("Nome Clube:"));
-        add(nomeClubeField);
+        idField = new JTextField(Integer.toString(jogador.getId()), 20);
+        idadeField = new JTextField(Integer.toString(jogador.getIdade()), 20);
+        nomeJogadorField = new JTextField(jogador.getNomeJogador(), 20);
+        nacionalidadeField = new JTextField(jogador.getNacionalidade(), 20);
+        nomeClubeField = new JTextField(jogador.getNomeClube(), 20);
 
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // ID
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(new JLabel("ID:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridwidth = 2; // Span 2 columns
+        add(idField, gbc);
+
+        // Idade
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1; // Reset to 1 column span
+        add(new JLabel("Idade:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridwidth = 2; // Span 2 columns
+        add(idadeField, gbc);
+
+        // Nome Jogador
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1; // Reset to 1 column span
+        add(new JLabel("Nome Jogador:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridwidth = 2; // Span 2 columns
+        add(nomeJogadorField, gbc);
+
+        // Nacionalidade
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 1; // Reset to 1 column span
+        add(new JLabel("Nacionalidade:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridwidth = 2; // Span 2 columns
+        add(nacionalidadeField, gbc);
+
+        // Nome Clube
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 1; // Reset to 1 column span
+        add(new JLabel("Nome Clube:"), gbc);
+        gbc.gridx = 1;
+        gbc.gridwidth = 2; // Span 2 columns
+        add(nomeClubeField, gbc);
+
+        // Buttons
         JButton okButton = new JButton("OK");
-        JButton cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton("Cancelar");
+        JButton removeButton = new JButton("Remover");
 
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (clicouOk()) {
-                    okPressed = true;
-                    setVisible(false);
-                }
-            }
+        removeButton.addActionListener(e -> {
+            remPressed = true;
+            okPressed = false;
+            setVisible(false);
         });
 
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                okPressed = false;
+        okButton.addActionListener(e -> {
+            if (clicouOk()) {
+                okPressed = true;
+                remPressed = false;
                 setVisible(false);
             }
         });
 
-        add(okButton);
-        add(cancelButton);
+        cancelButton.addActionListener(e -> {
+            okPressed = false;
+            remPressed = false;
+            setVisible(false);
+        });
+
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 1;
+        add(okButton, gbc);
+
+        gbc.gridx = 1;
+        add(cancelButton, gbc);
+
+        gbc.gridx = 2;
+        add(removeButton, gbc);
 
         pack();
     }
@@ -75,19 +126,23 @@ public class EditDialog extends JDialog {
                 jogador.setIdade(Integer.parseInt(idadeField.getText().trim()));
             }
             if (!nomeJogadorField.getText().trim().isEmpty()) {
-                jogador.setNomeJogador(nomeJogadorField.getText().trim());
+                jogador.setNomeJogador(nomeJogadorField.getText().trim().toUpperCase());
             }
             if (!nacionalidadeField.getText().trim().isEmpty()) {
-                jogador.setNacionalidade(nacionalidadeField.getText().trim());
+                jogador.setNacionalidade(nacionalidadeField.getText().trim().toUpperCase());
             }
             if (!nomeClubeField.getText().trim().isEmpty()) {
-                jogador.setNomeClube(nomeClubeField.getText().trim());
+                jogador.setNomeClube(nomeClubeField.getText().trim().toUpperCase());
             }
             return true;
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Please enter valid numeric values for ID and Idade.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "O valor do ID e da Idade do jogador devem ser do tipo int", "ERRO", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+    }
+
+    public boolean isRemPressed() {
+        return remPressed;
     }
 
     public boolean isOkPressed() {
