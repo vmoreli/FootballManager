@@ -197,6 +197,12 @@ public class FootballManagerMain extends JFrame {
             try {
                 // Leitura da resposta do servidor
                 s = input.readLine();
+                // Verifica se houve falha no processamento do arquivo
+                if(s.equals("Falha no processamento do arquivo.")){
+                    // Mostra uma mensagem informando a falha na abertura do arquivo
+                    JOptionPane.showMessageDialog(this, "Falha na abertura do arquivo.", "Informacao", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
                 while (!s.equals("FIM")) {
                     if (s.equals("REGISTRO INEXISTENTE")) {
                         // Mostra mensagem se nenhum jogador for encontrado
@@ -250,8 +256,6 @@ public class FootballManagerMain extends JFrame {
                         JOptionPane.showMessageDialog(this, "Falha na abertura do arquivo.", "Informacao", JOptionPane.INFORMATION_MESSAGE);
                         return;
                     }
-                    // Imprime a resposta do servidor
-                    System.out.println(s);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -267,8 +271,6 @@ public class FootballManagerMain extends JFrame {
                         JOptionPane.showMessageDialog(this, "Falha na abertura do arquivo.", "Informacao", JOptionPane.INFORMATION_MESSAGE);
                         return;
                     }
-                    // Imprime a resposta do servidor
-                    System.out.println(s);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -281,6 +283,12 @@ public class FootballManagerMain extends JFrame {
                 try {
                     // Lê os dados dos jogadores até encontrar "FIM"
                     s = input.readLine();
+                    // Verifica se houve falha no processamento do arquivo
+                    if(s.equals("Falha no processamento do arquivo.")){
+                        // Mostra uma mensagem informando a falha na abertura do arquivo
+                        JOptionPane.showMessageDialog(this, "Falha na abertura do arquivo.", "Informacao", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
                     while (!s.equals("FIM")) {
                         listaJog.add(s);
                         s = input.readLine();
@@ -349,9 +357,13 @@ public class FootballManagerMain extends JFrame {
                     try {
                         // Lê a resposta do servidor e imprime no console
                         String s = input.readLine();
-                        System.out.println(s);
+                        // Verifica se houve falha no processamento do arquivo
+                        if(s.equals("Falha no processamento do arquivo.")){
+                            // Mostra uma mensagem informando a falha na abertura do arquivo
+                            JOptionPane.showMessageDialog(this, "Falha na abertura do arquivo.", "Informacao", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
                         s = input.readLine();
-                        System.out.println(s);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -362,9 +374,13 @@ public class FootballManagerMain extends JFrame {
                     try {
                         // Lê a resposta do servidor e imprime no console
                         String s = input.readLine();
-                        System.out.println(s);
+                        // Verifica se houve falha no processamento do arquivo
+                        if(s.equals("Falha no processamento do arquivo.")){
+                            // Mostra uma mensagem informando a falha na abertura do arquivo
+                            JOptionPane.showMessageDialog(this, "Falha na abertura do arquivo.", "Informacao", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
                         s = input.readLine();
-                        System.out.println(s);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -376,7 +392,14 @@ public class FootballManagerMain extends JFrame {
                     try {
                         // Lê a lista de jogadores até encontrar "FIM"
                         s = input.readLine();
+                        // Verifica se houve falha no processamento do arquivo
+                        if(s.equals("Falha no processamento do arquivo.")){
+                            // Mostra uma mensagem informando a falha na abertura do arquivo
+                            JOptionPane.showMessageDialog(this, "Falha na abertura do arquivo.", "Informacao", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
                         while (!s.equals("FIM")) {
+
                             listaJog.add(s);
                             s = input.readLine();
                         }
@@ -404,9 +427,13 @@ public class FootballManagerMain extends JFrame {
                     try {
                         // Lê a resposta do servidor e imprime no console
                         String s = input.readLine();
-                        System.out.println(s);
+                        // Verifica se houve falha no processamento do arquivo
+                        if(s.equals("Falha no processamento do arquivo.")){
+                            // Mostra uma mensagem informando a falha na abertura do arquivo
+                            JOptionPane.showMessageDialog(this, "Falha na abertura do arquivo.", "Informacao", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
                         s = input.readLine();
-                        System.out.println(s);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -418,6 +445,12 @@ public class FootballManagerMain extends JFrame {
                     try {
                         // Lê a lista de jogadores até encontrar "FIM"
                         s = input.readLine();
+                        // Verifica se houve falha no processamento do arquivo
+                        if(s.equals("Falha no processamento do arquivo.")){
+                            // Mostra uma mensagem informando a falha na abertura do arquivo
+                            JOptionPane.showMessageDialog(this, "Falha na abertura do arquivo.", "Informacao", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
                         while (!s.equals("FIM")) {
                             listaJog.add(s);
                             s = input.readLine();
@@ -441,7 +474,7 @@ public class FootballManagerMain extends JFrame {
     public static void main(String[] args) {
         try {
             // Comando para iniciar o script Python
-            String command = "python socket_server.py";
+            String command = "python3 socket_server.py";
 
             // Cria um ProcessBuilder para executar o comando
             ProcessBuilder pb = new ProcessBuilder(command.split(" "));

@@ -18,11 +18,31 @@ public class Jogador {
     public Jogador(String jogString) {
         String[] splitStrJog;
         splitStrJog =  jogString.split(",");
-        this.id = Integer.parseInt(splitStrJog[0]);
-        this.idade = Integer.parseInt(splitStrJog[1]);
-        this.nomeJogador = splitStrJog[2];
-        this.nacionalidade = splitStrJog[3];
-        this.nomeClube = splitStrJog[4];
+        if (splitStrJog[0].equals("SEM DADO")) {
+            this.id = -1;
+        }else {
+            this.id = Integer.parseInt(splitStrJog[0]);
+        }
+        if (splitStrJog[1].equals("SEM DADO")) {
+            this.idade = -1;
+        }else {
+            this.idade = Integer.parseInt(splitStrJog[1]);
+        }
+        if (splitStrJog[2].equals("SEM DADO")) {
+            this.nomeJogador = null;
+        }else {
+            this.nomeJogador = splitStrJog[2];
+        }
+        if (splitStrJog[3].equals("SEM DADO")) {
+            this.nacionalidade = null;
+        }else {
+            this.nacionalidade = splitStrJog[3];
+        }
+        if (splitStrJog[4].equals("SEM DADO")) {
+            this.nomeClube = null;
+        }else {
+            this.nomeClube = splitStrJog[4];
+        }
     }
 
     //Getters e Setters

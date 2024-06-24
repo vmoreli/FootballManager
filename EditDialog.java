@@ -127,18 +127,28 @@ public class EditDialog extends JDialog {
               // se falhar ao converter para int (id e idade), alerta o usuário.
             if (!idField.getText().trim().isEmpty()) {
                 jogador.setId(Integer.parseInt(idField.getText().trim()));
+            }else{
+                jogador.setId(-1);
             }
             if (!idadeField.getText().trim().isEmpty()) {
                 jogador.setIdade(Integer.parseInt(idadeField.getText().trim()));
+            }else{
+                jogador.setIdade(-1);
             }
             if (!nomeJogadorField.getText().trim().isEmpty()) {
                 jogador.setNomeJogador(nomeJogadorField.getText().trim().toUpperCase());
+            }else{
+                jogador.setNomeJogador(null);
             }
             if (!nacionalidadeField.getText().trim().isEmpty()) {
                 jogador.setNacionalidade(nacionalidadeField.getText().trim().toUpperCase());
+            }else{
+                jogador.setNacionalidade(null);
             }
             if (!nomeClubeField.getText().trim().isEmpty()) {
                 jogador.setNomeClube(nomeClubeField.getText().trim().toUpperCase());
+            }else{
+                jogador.setNomeClube(null);
             }
             return true;
         } catch (NumberFormatException e) {
