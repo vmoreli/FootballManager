@@ -14,6 +14,7 @@ public class Jogador {
         this.nomeClube = nomeClube;
     }
 
+    //Construtor a partir de uma String no formato "<id>,<idade>,<nomeJogador>,<nacionalidade>,<nomeClube>"
     public Jogador(String jogString) {
         String[] splitStrJog;
         splitStrJog =  jogString.split(",");
@@ -23,6 +24,8 @@ public class Jogador {
         this.nacionalidade = splitStrJog[3];
         this.nomeClube = splitStrJog[4];
     }
+
+    //Getters e Setters
     public int getId() {
         return id;
     }
@@ -64,7 +67,9 @@ public class Jogador {
     }
 
     public String toString1() {
-        String jogador = ""; // Essa string será o jogador resultante para o programa em C
+        // Essa string será o jogador resultante no formato:
+        // "<numCampos> <nomeCampo1> <valorCampo1> ... <nomeCampoN> <valorCampoN>"
+        String jogador = "";
         int numCampos = 0; // numero de campos especificados
 
         if(id != -1){
@@ -93,7 +98,9 @@ public class Jogador {
 
     @Override
     public String toString() {
-        String jogador = ""; // Essa string será o jogador resultante para o programa em C
+        // Essa string será o jogador resultante no formato:
+        // "<id> <idade> <"nomeJogador"> <"nacionalidade"> <"nomeClube">"
+        String jogador = "";
 
         if(id != -1){
             jogador = jogador.concat(id + " ");
