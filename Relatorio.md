@@ -185,8 +185,7 @@ O programa em C realiza operações de leitura, escrita, busca e manipulação d
 2. Executar o comando `javac *.java`.
 
 ### Passos para configurar e iniciar o servidor em Python
-1. Navegar até o diretório do servidor Python.
-2. Executar o comando `python3 socket_server.py`.
+1. Execute o comando `java FootballManagerMain`para rodar a interface, que já inicializará o `socket_server.py`.
 
 ### Passos para compilar e executar o programa em C
 1. Ao inicializar o servidor (`socket_server.py`), os programas em C já são previamente compilados. 
